@@ -17,7 +17,8 @@ router.get('/', (req, res) => {
 
 // login
 router.post('/login', (req, res) => {
-  // TODO: verify user exists
+  // TODO: verify user exists on database
+  if(typeof req.body.username === 'undefined') return res.sendStatus(422)
 
   // payload to serialize within token
   const user = {
