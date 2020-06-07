@@ -1,0 +1,18 @@
+@HOST = 127.0.0.1
+@PORT = 3000 
+@BASE_URL = http://{{HOST}}:{{PORT}}
+
+### regular
+GET {{BASE_URL}}/
+
+### login
+POST {{BASE_URL}}/login
+content-type: application/json
+
+{
+  "username": "testuser",
+  "password": "1234"
+}
+
+### protected
+POST {{BASE_URL}}/protected
