@@ -9,7 +9,6 @@ const router = express.Router()
 const PORT = process.env.PORT || 3000
 const HOST = process.env.HOST || '127.0.0.1'
 const ACCESS_TOKEN_SECRET = process.env.ACCESS_TOKEN_SECRET || 'exampleSecretKey123'
-const REFRESH_TOKEN_SECRET = process.env.REFRESH_TOKEN_SECRET || 'exampleRefreshKey123'
 
 // unprotected route
 router.get('/', (req, res) => {
@@ -26,7 +25,7 @@ router.post('/login', (req, res) => {
     username: req.body.username
   }
   // create access token
-  jwt.sign(user, ACCESS_TOKEN_SECRET, (err, accessToken) => {
+  jwt.sign(user, ACCESS_TOKEN_SECRET, { expiresIn:'1m' },  (err, accessToken) => {
     if(err) return res.sendStatus(422)
     // return created token
     res.json({accessToken})
