@@ -26,7 +26,7 @@ router.post('/login', (req, res) => {
     username: req.body.username
   }
   // create access token
-  jwt.sign(user, ACCESS_TOKEN_SECRET, { expiresIn:'1m' },  (err, accessToken) => {
+  jwt.sign(user, ACCESS_TOKEN_SECRET, { expiresIn:'5m' },  (err, accessToken) => {
     if(err) return res.sendStatus(422)
     // return created token
     res.json({accessToken})
