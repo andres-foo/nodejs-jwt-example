@@ -2,6 +2,8 @@
 
 Example using jwt (JSON Web Tokens) to generate a token and access a protected route by validating it.
 
+**For an example with logout check the branch _feature_logout_**
+
 ## Installation
 Install dependencies with:
 
