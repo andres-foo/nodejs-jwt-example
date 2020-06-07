@@ -34,19 +34,24 @@ router.post('/login', (req, res) => {
 })
 
 // protected route
-router.post('/protected', (req, res) => {
+router.post('/protected', verifyToken, (req, res) => {
+  res.send(req.decoded)
+})
+
+// verify token and attach decoded data to request
+function verifyToken(req, res, next) {
   // get token
   const authorization = req.headers['authorization']
   const token = authorization.split(' ')[1]
-
   // verify token
   jwt.verify(token, SECRET_KEY, (err, decoded) => {
     if(err) {
-      res.json({error: 'Not a valid token'})
+      return res.status(403).send('Forbidden')
     }
-    res.json({decoded, data: 'Protected data'})
+    req.decoded = decoded
+    next()
   }) 
-})
+}
 
 // parse requests of content-type - application/json
 app.use(express.json())
