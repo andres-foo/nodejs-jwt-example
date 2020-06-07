@@ -1,4 +1,5 @@
 require('dotenv').config()
+const crypto = require('crypto')
 const express = require('express')
 const jwt = require('jsonwebtoken')
 const app = express()
@@ -15,22 +16,49 @@ router.get('/', (req, res) => {
   res.send('Home')
 })
 
+// sample user data
+const users = [
+  { id:1, username: 'testuser', password: 'someHashedPassword', accessTokenSecret: ''},
+  { id:2, username: 'anotheruser', password: 'anotherHashedPassword', accessTokenSecret: ''}
+]
+
 // login
 router.post('/login', (req, res) => {
-  // TODO: verify user exists on database
-  if(typeof req.body.username === 'undefined') return res.sendStatus(422)
+  // TODO: verify and validate user from database
+  const user = users.find(user => user.username === req.body.username)
+  if(user == null) return res.sendStatus(422)
+
+  // generate personal key which will be half of the secret used to sign token
+  const accessTokenSecret = crypto.randomBytes(32).toString('hex')
+  // TODO: save the secretKey in database
+  user.accessTokenSecret = accessTokenSecret
 
   // payload to serialize within token
-  const user = {
-    userid: 1,
-    username: req.body.username
+  const payload = {
+    userid: user.id,
+    username: user.username
   }
+
+  // combination of personal secret + app wide secret
+  secretKey = accessTokenSecret + ACCESS_TOKEN_SECRET
+
   // create access token
-  jwt.sign(user, ACCESS_TOKEN_SECRET, { expiresIn:'5m' },  (err, accessToken) => {
+  jwt.sign(payload, secretKey, { expiresIn:'1h' },  (err, accessToken) => {
     if(err) return res.sendStatus(422)
     // return created token
     res.json({accessToken})
   })  
+})
+
+// remove personal secret
+router.post('/logout', verifyToken, (req, res) => {
+  // TODO: find user in db
+  const user = users.find(user => user.id === req.user.userid)
+  if(user == null) return res.sendStatus(422)
+
+  // TODO: empty accessTokenSecret in db
+  user.accessTokenSecret = '' 
+  return res.status(200).json({ message: 'Logged out' })
 })
 
 // protected route
@@ -47,8 +75,17 @@ function verifyToken(req, res, next) {
   // no authentication token provided
   if(accessToken == null) return res.sendStatus(401)
 
+  // get user id from payload
+  const userid = jwt.decode(accessToken).userid
+  // TODO: verify user exists on a database
+  const user = users.find(user => user.id === userid)
+  if(user == null) return res.sendStatus(422)
+
+  // combination of personal key + app wide
+  secretKey = user.accessTokenSecret + ACCESS_TOKEN_SECRET
+
   // verify token
-  jwt.verify(accessToken, ACCESS_TOKEN_SECRET, (err, decoded) => {
+  jwt.verify(accessToken, secretKey, (err, decoded) => {
     // unable to verify token
     if(err) return res.sendStatus(401)
     // make decoded payload available at req.user

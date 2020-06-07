@@ -2,7 +2,7 @@
 @PORT=3000 
 @BASE_URL=http://{{HOST}}:{{PORT}}
 # login and paste your token here
-@TOKEN=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyaWQiOjEsInVzZXJuYW1lIjoidGVzdHVzZXIiLCJpYXQiOjE1OTE1MDM0MzcsImV4cCI6MTU5MTUwMzQ5N30._SgFJFcsOCJFI7oroa6ZYS6S__Al46Wadr5J3UvyVIk
+@TOKEN=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyaWQiOjEsInVzZXJuYW1lIjoidGVzdHVzZXIiLCJpYXQiOjE1OTE1NjI2MjksImV4cCI6MTU5MTU2NjIyOX0.3WwACYrwQogYC_pA2H2Q4af3RTK3GDRRpukRFrPEgKc
 ### unprotected
 GET {{BASE_URL}}/
 
@@ -28,3 +28,7 @@ POST {{BASE_URL}}/protected
 ### protected with incorrect token
 POST {{BASE_URL}}/protected
 Authorization: Bearer notAValidToken
+
+### logout user
+POST {{BASE_URL}}/logout
+Authorization: Bearer {{TOKEN}}
