@@ -65,4 +65,4 @@ app.use(express.urlencoded({extended: false}))
 app.use(router)
 
 //start
-app.listen(3000, () => console.log(`Listening on http://${HOST}:${PORT}`))
+app.listen(PORT, HOST, () => console.log(`Listening on http://${HOST}:${PORT}`))
